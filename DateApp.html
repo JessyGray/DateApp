@@ -686,6 +686,18 @@
     }
 
 });
+    document.addEventListener("click", function (e) {
+
+    if (e.target.id === "mobileCloseBtn") {
+
+        document.getElementById("mobileNoModal")
+            .classList.remove("show");
+
+        clearInterval(mobileTimer);
+        mobileTimer = null;
+    }
+
+});
     window.addEventListener('resize', () => {
       const btn = document.getElementById('noBtn');
       const buttons = document.querySelector('.buttons');
@@ -716,7 +728,7 @@
         <h2>Подумай ещё раз</h2>
 
         <p>
-            Иногда хорошие вещи требуют немного времени.
+            Если что, передумать ещё не поздно 🙂
         </p>
 
         <div class="mobile-countdown" id="mobileCountdown">
@@ -729,6 +741,9 @@
             disabled>
             OK
         </button>
+      <button class="btn btn-no" id="mobileCloseBtn">
+    Вернуться
+</button>
     </div>
 </div>
 </body>
