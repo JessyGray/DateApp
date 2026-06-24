@@ -665,14 +665,18 @@
 
       sayNo();
     }, true);
-    document.getElementById("mobileModalBtn").addEventListener("click", () => {
-    const modal = document.getElementById("mobileNoModal");
+    const mobileModalBtn = document.getElementById("mobileModalBtn");
 
-    modal.classList.remove("show");
+if (mobileModalBtn) {
+    mobileModalBtn.addEventListener("click", () => {
+        const modal = document.getElementById("mobileNoModal");
 
-    clearInterval(mobileTimer);
-    mobileTimer = null;
-});
+        modal.classList.remove("show");
+
+        clearInterval(mobileTimer);
+        mobileTimer = null;
+    });
+}
     window.addEventListener('resize', () => {
       const btn = document.getElementById('noBtn');
       const buttons = document.querySelector('.buttons');
