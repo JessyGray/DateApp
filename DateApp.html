@@ -319,6 +319,36 @@
         scroll-behavior: auto !important;
       }
     }
+    .mobile-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+}
+
+.mobile-modal-backdrop.show {
+    display: flex;
+}
+
+.mobile-modal {
+    width: min(90vw,400px);
+    background: rgba(255,255,255,.95);
+    border-radius: 24px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+
+.mobile-countdown {
+    font-size: 36px;
+    font-weight: 800;
+    color: #ff4f8b;
+    margin: 20px 0;
+}
   </style>
 </head>
 
@@ -350,7 +380,10 @@
     let selectedTime = '';
     let selectedVibe = 'Кофе';
     let noButtonFixed = false;
+    let mobileTimer = null;
+    let mobileSeconds = 154;
 
+    
     function isDesktopPointer() {
       return window.matchMedia("(hover: hover) and (pointer: fine)").matches && window.innerWidth >= 1024;
     }
@@ -500,7 +533,34 @@
         <button class="btn btn-yes yes" onclick="finish()">Готово</button>
       `);
     }
+    function openMobileNoModal() {
+    const modal = document.getElementById("mobileNoModal");
+    const countdown = document.getElementById("mobileCountdown");
+    const btn = document.getElementById("mobileModalBtn");
 
+    mobileSeconds = 154;
+    countdown.textContent = mobileSeconds;
+    btn.disabled = true;
+
+    modal.classList.add("show");
+
+    if (mobileTimer) {
+        clearInterval(mobileTimer);
+    }
+
+    mobileTimer = setInterval(() => {
+        mobileSeconds--;
+
+        countdown.textContent = mobileSeconds;
+
+        if (mobileSeconds <= 0) {
+            clearInterval(mobileTimer);
+            mobileTimer = null;
+            btn.disabled = false;
+        }
+    }, 1000);
+}
+    
     function finish() {
       selectedVibe = document.getElementById('vibe').value;
       sendTelegramNotification('Она сказала ДА ❤️');
@@ -586,11 +646,15 @@
     document.addEventListener('click', (e) => {
       if (!e.target || e.target.id !== 'noBtn') return;
 
-      if (!isDesktopPointer()) {
-        e.preventDefault();
-        mobileNoClickAnimation(e.target);
-        return;
-      }
+     if (!isDesktopPointer()) {
+    e.preventDefault();
+
+    mobileNoClickAnimation(e.target);
+
+    openMobileNoModal();
+
+    return;
+}
 
       if (Math.random() < 0.75) {
         e.preventDefault();
@@ -627,5 +691,25 @@
       }
     });
   </script>
+  <div class="mobile-modal-backdrop" id="mobileNoModal">
+    <div class="mobile-modal">
+        <h2>Подумай ещё раз</h2>
+
+        <p>
+            Иногда хорошие вещи требуют немного времени.
+        </p>
+
+        <div class="mobile-countdown" id="mobileCountdown">
+            154
+        </div>
+
+        <button
+            class="btn btn-yes"
+            id="mobileModalBtn"
+            disabled>
+            OK
+        </button>
+    </div>
+</div>
 </body>
 </html>
