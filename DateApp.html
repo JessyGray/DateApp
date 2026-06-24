@@ -381,7 +381,7 @@
     let selectedVibe = 'Кофе';
     let noButtonFixed = false;
     let mobileTimer = null;
-    let mobileSeconds = 154;
+    let mobileSeconds = 15;
 
     
     function isDesktopPointer() {
@@ -538,7 +538,7 @@
     const countdown = document.getElementById("mobileCountdown");
     const btn = document.getElementById("mobileModalBtn");
 
-    mobileSeconds = 154;
+    mobileSeconds = 15;
     countdown.textContent = mobileSeconds;
     btn.disabled = true;
 
@@ -665,7 +665,14 @@
 
       sayNo();
     }, true);
+    document.getElementById("mobileModalBtn").addEventListener("click", () => {
+    const modal = document.getElementById("mobileNoModal");
 
+    modal.classList.remove("show");
+
+    clearInterval(mobileTimer);
+    mobileTimer = null;
+});
     window.addEventListener('resize', () => {
       const btn = document.getElementById('noBtn');
       const buttons = document.querySelector('.buttons');
@@ -700,7 +707,7 @@
         </p>
 
         <div class="mobile-countdown" id="mobileCountdown">
-            154
+            15
         </div>
 
         <button
