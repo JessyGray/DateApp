@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Сходим куда-нибудь?</title>
+
+  <style>
+    :root {
+      --bg-1: #fff8fc;
+      --bg-2: #ffeef6;
+      --card: rgba(255, 255, 255, 0.78);
+      --card-border: rgba(255, 255, 255, 0.66);
+      --text: #2c2433;
+      --muted: #6e6273;
+      --primary: #ff4f8b;
+      --primary-hover: #f63b7d;
+      --secondary: #ffffff;
+      --secondary-border: rgba(44, 36, 51, 0.12);
+      --secondary-text: #403546;
+      --shadow-lg: 0 20px 50px rgba(180, 66, 113, 0.16);
+      --shadow-sm: 0 8px 18px rgba(44, 36, 51, 0.08);
+      --radius-xl: 28px;
+      --transition: 220ms ease;
+      --container-width: 720px;
+      --btn-height: 56px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 182, 215, 0.42), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(255, 207, 227, 0.5), transparent 30%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: clamp(16px, 3vw, 28px);
+      overflow-x: hidden;
+    }
+
+    .scene {
+      width: 100%;
+      max-width: var(--container-width);
+      position: relative;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      padding: clamp(22px, 4vw, 40px);
+      border-radius: var(--radius-xl);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      text-align: center;
+      overflow: hidden;
+      isolation: isolate;
+      transition: var(--transition);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.12));
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .emoji {
+      font-size: clamp(34px, 7vw, 50px);
+      line-height: 1;
+      margin-bottom: 14px;
+      display: inline-block;
+      filter: drop-shadow(0 6px 14px rgba(255, 79, 139, 0.18));
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+    }
+
+    .lead,
+    p {
+      margin: 0 auto 24px;
+      max-width: 42ch;
+      color: var(--muted);
+      font-size: clamp(15px, 2.5vw, 18px);
+      line-height: 1.65;
+    }
+
+    .buttons-wrap {
+      position: relative;
+      margin-top: clamp(26px, 4vw, 34px);
+      min-height: 72px;
+    }
+
+    .buttons {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      width: 100%;
+      min-height: 72px;
+    }
+
+    .btn,
+    button,
+    select,
+    input {
+      font: inherit;
+      outline: none;
+    }
+
+    .btn,
+    button {
+      appearance: none;
+      border: 0;
+      min-width: 148px;
+      height: var(--btn-height);
+      padding: 0 24px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition:
+        left 150ms ease-out,
+        top 150ms ease-out,
+        transform var(--transition),
+        box-shadow var(--transition),
+        background var(--transition),
+        color var(--transition),
+        opacity var(--transition);
+      box-shadow: var(--shadow-sm);
+      white-space: nowrap;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .btn:active,
+    button:active {
+      transform: translateY(1px) scale(0.995);
+    }
+
+    .btn-yes,
+    .yes {
+      background: linear-gradient(180deg, #ff6a9d 0%, var(--primary) 100%);
+      color: #fff;
+      box-shadow: 0 14px 28px rgba(255, 79, 139, 0.28);
+    }
+
+    .btn-yes:hover,
+    .yes:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 34px rgba(255, 79, 139, 0.34);
+      background: linear-gradient(180deg, #ff78a6 0%, var(--primary-hover) 100%);
+    }
+
+    .btn-no,
+    .no,
+    .soft {
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--secondary-text);
+      border: 1px solid var(--secondary-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-no:hover,
+    .no:hover,
+    .soft:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(44, 36, 51, 0.10);
+    }
+
+    .btn-no.runaway {
+      position: fixed !important;
+      z-index: 99999 !important;
+      pointer-events: auto;
+    }
+
+    .form {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--secondary-text);
+    }
+
+    select,
+    input {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid var(--secondary-border);
+      padding: 15px 16px;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+      font-size: 16px;
+    }
+
+    .small {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 18px;
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    .heart-line {
+      font-size: 28px;
+      letter-spacing: 8px;
+      margin-top: 24px;
+      color: var(--primary);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .content {
+      animation: fadeUp 260ms ease;
+    }
+
+    @media (max-width: 1023px), (hover: none), (pointer: coarse) {
+      body {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 14px;
+      }
+
+      .card {
+        border-radius: 24px;
+        padding: 24px 18px;
+      }
+
+      .buttons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .btn,
+      button {
+        width: 100%;
+        min-width: 0;
+        height: 52px;
+        padding: 0 20px;
+        font-size: 15px;
+      }
+
+      .buttons-wrap {
+        min-height: 124px;
+      }
+
+      .btn-yes:hover,
+      .btn-no:hover {
+        transform: none;
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 20px 16px;
+      }
+
+      h1 {
+        font-size: clamp(26px, 8vw, 32px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scene">
+    <main class="card" id="card">
+      <div class="content" id="content">
+        <div class="emoji">🌸</div>
+        <h1>Сходим куда-нибудь?</h1>
+        <p class="lead">
+          Без давления. Если нет, всё нормально.<br />
+          Я просто рискнул спросить.
+        </p>
+
+        <div class="buttons-wrap">
+          <div class="buttons">
+            <button class="btn btn-yes yes" id="yesBtn" type="button" onclick="sayYes()">Да, можно 🙂</button>
+            <button class="btn btn-no no" id="noBtn" type="button">Не сейчас</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const card = document.getElementById('card');
+
+    let selectedDay = '';
+    let selectedTime = '';
+    let selectedVibe = 'Кофе';
+    let noButtonFixed = false;
+
+    function isDesktopPointer() {
+      return window.matchMedia("(hover: hover) and (pointer: fine)").matches && window.innerWidth >= 1024;
+    }
+
+    function render(html) {
+      card.innerHTML = `<div class="content">${html}</div>`;
+    }
+
+    async function sendTelegramNotification(status) {
+      const token = "8831473698:AAEqeED_F-dbaLKEA8tpcIXO2Vt0DZ_F-Uo";
+      const chatId = "8406034806";
+
+      const text =
+        status + "\n" +
+        "День: " + (selectedDay || "не выбран") + "\n" +
+        "Время: " + (selectedTime || "не выбрано") + "\n" +
+        "Формат: " + (selectedVibe || "не выбран");
+
+      try {
+        await fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: text
+          })
+        });
+      } catch (error) {
+        console.log("Telegram error:", error);
+      }
+    }
+
+    function sayNo() {
+      if (!isDesktopPointer()) {
+        return;
+      }
+
+      sendTelegramNotification('Она нажала НЕТ / Не сейчас');
+
+      render(`
+        <div class="emoji">🤝</div>
+        <h1>Окей, без неловкости</h1>
+        <p>Спасибо за честный ответ. Всё спокойно, дружески и без странных моментов.</p>
+        <button class="btn soft" onclick="location.reload()">Вернуться назад</button>
+        <div class="small">P.S. лучше спросить нормально, чем потом делать вид, что я не хотел 😄</div>
+      `);
+    }
+
+    function getAvailableDays() {
+      const days = [];
+      const names = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (let i = 0; i < 60; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        const day = d.getDay();
+
+        if (day === 5 || day === 6) {
+          const value = d.toISOString().split('T')[0];
+          const label = `${names[day]}, ${d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })}`;
+          days.push(`<option value="${value}" data-weekday="${day}">${label}</option>`);
+        }
+      }
+
+      return days.join('');
+    }
+
+    function updateTimes() {
+      const daySelect = document.getElementById('day');
+      const timeSelect = document.getElementById('time');
+      const weekday = daySelect.options[daySelect.selectedIndex]?.dataset.weekday;
+
+      let times = ['<option value="">Выбери время...</option>'];
+
+      if (weekday === '5') {
+        times.push('<option>18:00</option>', '<option>19:00</option>', '<option>20:00</option>', '<option>21:00</option>');
+      } else if (weekday === '6') {
+        times.push(
+          '<option>12:00</option>',
+          '<option>13:00</option>',
+          '<option>14:00</option>',
+          '<option>15:00</option>',
+          '<option>16:00</option>',
+          '<option>17:00</option>',
+          '<option>18:00</option>',
+          '<option>19:00</option>',
+          '<option>20:00</option>'
+        );
+      }
+
+      times.push('<option>Давай обсудим</option>');
+      timeSelect.innerHTML = times.join('');
+    }
+
+    function sayYes() {
+      render(`
+        <div class="emoji">📅</div>
+        <h1>Когда тебе удобно?</h1>
+
+        <div class="form">
+          <label>День</label>
+          <select id="day" onchange="updateTimes()">
+            <option value="">Выбери день...</option>
+            ${getAvailableDays()}
+          </select>
+
+          <label>Время</label>
+          <select id="time">
+            <option value="">Сначала выбери день...</option>
+          </select>
+        </div>
+
+        <br>
+        <button class="btn btn-yes yes" onclick="goFood()">Дальше</button>
+      `);
+    }
+
+    function goFood() {
+      const dayEl = document.getElementById('day');
+      const timeEl = document.getElementById('time');
+
+      selectedDay = dayEl.options[dayEl.selectedIndex]?.text || 'день обсудим';
+      selectedTime = timeEl.value || 'время обсудим';
+
+      render(`
+        <div class="emoji">🍽️</div>
+        <h1>Что по настроению?</h1>
+        <p>${selectedDay}, ${selectedTime}. Теперь выбери формат.</p>
+
+        <div class="form">
+          <label>Вариант</label>
+          <select id="vibe">
+            <option>Кофе</option>
+            <option>Пицца</option>
+            <option>Суши</option>
+            <option>Бургеры</option>
+            <option>Паста</option>
+            <option>Рамен</option>
+            <option>Прогулка</option>
+            <option>Что-то спокойное</option>
+          </select>
+        </div>
+
+        <br>
+        <button class="btn btn-yes yes" onclick="finish()">Готово</button>
+      `);
+    }
+
+    function finish() {
+      selectedVibe = document.getElementById('vibe').value;
+      sendTelegramNotification('Она сказала ДА ❤️');
+
+      render(`
+        <div class="emoji">🚗</div>
+        <h1>Рад, что ты сказала «да».</h1>
+        <p>Тогда в ${selectedDay}, ${selectedTime} я заеду за тобой 🚗</p>
+        <p class="heart-line">♥ ♥ ♥ ♥ ♥</p>
+      `);
+    }
+
+    function moveNoButton() {
+      const btn = document.getElementById('noBtn');
+      if (!btn || !isDesktopPointer()) return;
+
+      if (!noButtonFixed) {
+        const rect = btn.getBoundingClientRect();
+
+        // Move the button out of the card before fixing its position.
+        // This prevents the card's glass/overflow area from clipping it.
+        document.body.appendChild(btn);
+
+        btn.classList.add('runaway');
+        btn.style.position = 'fixed';
+        btn.style.left = rect.left + 'px';
+        btn.style.top = rect.top + 'px';
+        btn.style.right = 'auto';
+        btn.style.bottom = 'auto';
+        btn.style.width = rect.width + 'px';
+        btn.style.height = rect.height + 'px';
+        btn.style.zIndex = '99999';
+
+        noButtonFixed = true;
+      }
+
+      const margin = 24;
+      const rect = btn.getBoundingClientRect();
+
+      const maxX = Math.max(margin, window.innerWidth - rect.width - margin);
+      const maxY = Math.max(margin, window.innerHeight - rect.height - margin);
+
+      const x = Math.floor(margin + Math.random() * Math.max(1, maxX - margin));
+      const y = Math.floor(margin + Math.random() * Math.max(1, maxY - margin));
+
+      btn.style.left = x + 'px';
+      btn.style.top = y + 'px';
+    }
+
+    document.addEventListener('mouseover', (e) => {
+      if (e.target && e.target.id === 'noBtn' && isDesktopPointer()) {
+        if (Math.random() < 0.08) return;
+        moveNoButton();
+      }
+    });
+
+    function mobileNoClickAnimation(target) {
+      target.style.transform = 'scale(0.94)';
+
+      setTimeout(() => {
+        target.style.transform = '';
+      }, 130);
+    }
+
+    document.addEventListener('pointerdown', (e) => {
+      if (!e.target || e.target.id !== 'noBtn') return;
+
+      if (!isDesktopPointer()) {
+        e.preventDefault();
+        mobileNoClickAnimation(e.target);
+      }
+    }, true);
+
+    document.addEventListener('touchstart', (e) => {
+      if (!e.target || e.target.id !== 'noBtn') return;
+
+      if (!isDesktopPointer()) {
+        e.preventDefault();
+        mobileNoClickAnimation(e.target);
+      }
+    }, { capture: true, passive: false });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target || e.target.id !== 'noBtn') return;
+
+      if (!isDesktopPointer()) {
+        e.preventDefault();
+        mobileNoClickAnimation(e.target);
+        return;
+      }
+
+      if (Math.random() < 0.75) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        moveNoButton();
+        return;
+      }
+
+      sayNo();
+    }, true);
+
+    window.addEventListener('resize', () => {
+      const btn = document.getElementById('noBtn');
+      const buttons = document.querySelector('.buttons');
+
+      if (!btn) return;
+
+      if (!isDesktopPointer()) {
+        if (buttons && btn.parentElement !== buttons) {
+          buttons.appendChild(btn);
+        }
+
+        btn.classList.remove('runaway');
+        btn.style.position = '';
+        btn.style.left = '';
+        btn.style.top = '';
+        btn.style.right = '';
+        btn.style.bottom = '';
+        btn.style.width = '';
+        btn.style.height = '';
+        btn.style.zIndex = '';
+        btn.style.transform = '';
+        noButtonFixed = false;
+      }
+    });
+  </script>
+</body>
+</html>
