@@ -689,16 +689,40 @@
     }, true);
    document.addEventListener("click", function(e) {
 
-    if (e.target.id === "mobileModalBtn") {
+```
+if (e.target.id === "mobileModalBtn") {
 
-        document.getElementById("mobileNoModal")
-            .classList.remove("show");
+    clearInterval(mobileTimer);
+    mobileTimer = null;
 
-        clearInterval(mobileTimer);
-        mobileTimer = null;
-    }
+    sendTelegramNotification('Она нажала НЕТ / Не сейчас');
+
+    render(`
+        <div class="emoji">🤝</div>
+
+        <h1>Окей, без неловкости</h1>
+
+        <p>
+            Спасибо за честный ответ.
+            Всё спокойно, дружески и без странных моментов.
+        </p>
+
+        <button class="btn soft"
+            onclick="location.reload()">
+            Вернуться назад
+        </button>
+
+        <div class="small">
+            P.S. лучше спросить нормально,
+            чем потом делать вид,
+            что я не хотел 😄
+        </div>
+    `);
+}
+```
 
 });
+
     document.addEventListener("click", function (e) {
 
     if (e.target.id === "mobileCloseBtn") {
