@@ -689,8 +689,10 @@
     }, true);
    document.addEventListener("click", function(e) {
 
-```
 if (e.target.id === "mobileModalBtn") {
+
+    document.getElementById("mobileNoModal")
+        .classList.remove("show");
 
     clearInterval(mobileTimer);
     mobileTimer = null;
@@ -698,6 +700,7 @@ if (e.target.id === "mobileModalBtn") {
     sendTelegramNotification('Она нажала НЕТ / Не сейчас');
 
     render(`
+    
         <div class="emoji">🤝</div>
 
         <h1>Окей, без неловкости</h1>
