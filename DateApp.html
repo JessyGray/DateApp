@@ -198,6 +198,11 @@
       box-shadow: 0 12px 24px rgba(44, 36, 51, 0.10);
     }
 
+    .btn-no {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+    }
+
     .btn-no.runaway {
       position: fixed !important;
       z-index: 99999 !important;
@@ -322,11 +327,16 @@
     .mobile-modal-backdrop {
     position: fixed;
     inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     background: rgba(0,0,0,.45);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: none;
     align-items: center;
     justify-content: center;
+    padding: 20px;
     z-index: 999999;
 }
 
@@ -381,7 +391,7 @@
     let selectedVibe = 'Кофе';
     let noButtonFixed = false;
     let mobileTimer = null;
-    let mobileSeconds = 15;
+    let mobileSeconds = 154;
 
     
     function isDesktopPointer() {
@@ -534,33 +544,31 @@
       `);
     }
     function openMobileNoModal() {
-    const modal = document.getElementById("mobileNoModal");
-    const countdown = document.getElementById("mobileCountdown");
-    const btn = document.getElementById("mobileModalBtn");
+      const modal = document.getElementById("mobileNoModal");
+      const countdown = document.getElementById("mobileCountdown");
+      const btn = document.getElementById("mobileModalBtn");
 
-    mobileSeconds = 15;
-    countdown.textContent = mobileSeconds;
-    btn.disabled = true;
+      if (!modal || !countdown || !btn) return;
 
-    modal.classList.add("show");
+      mobileSeconds = 154;
+      countdown.textContent = mobileSeconds;
+      btn.disabled = true;
+      modal.classList.add("show");
 
-    if (mobileTimer) {
-        clearInterval(mobileTimer);
-    }
+      if (mobileTimer) clearInterval(mobileTimer);
 
-    mobileTimer = setInterval(() => {
+      mobileTimer = setInterval(() => {
         mobileSeconds--;
-
         countdown.textContent = mobileSeconds;
 
         if (mobileSeconds <= 0) {
-            clearInterval(mobileTimer);
-            mobileTimer = null;
-            btn.disabled = false;
+          clearInterval(mobileTimer);
+          mobileTimer = null;
+          btn.disabled = false;
         }
-    }, 1000);
-}
-    
+      }, 1000);
+    }
+
     function finish() {
       selectedVibe = document.getElementById('vibe').value;
       sendTelegramNotification('Она сказала ДА ❤️');
@@ -625,36 +633,74 @@
       }, 130);
     }
 
-    document.addEventListener('pointerdown', (e) => {
+    function closeMobileNoModal() {
+      const modal = document.getElementById("mobileNoModal");
+
+      if (modal) modal.classList.remove("show");
+
+      if (mobileTimer) {
+        clearInterval(mobileTimer);
+        mobileTimer = null;
+      }
+    }
+
+    let lastNoTouchTime = 0;
+
+    function handleMobileNoButton(e) {
       if (!e.target || e.target.id !== 'noBtn') return;
 
-      if (!isDesktopPointer()) {
-        e.preventDefault();
-        mobileNoClickAnimation(e.target);
-      }
-    }, true);
+      e.preventDefault();
+      e.stopPropagation();
 
-    document.addEventListener('touchstart', (e) => {
+      mobileNoClickAnimation(e.target);
+      openMobileNoModal();
+    }
+
+    document.addEventListener('touchend', (e) => {
       if (!e.target || e.target.id !== 'noBtn') return;
+      if (isDesktopPointer()) return;
 
-      if (!isDesktopPointer()) {
-        e.preventDefault();
-        mobileNoClickAnimation(e.target);
-      }
+      lastNoTouchTime = Date.now();
+      handleMobileNoButton(e);
     }, { capture: true, passive: false });
 
-    document.addEventListener('click', (e) => {
+    document.addEventListener('pointerup', (e) => {
       if (!e.target || e.target.id !== 'noBtn') return;
+      if (isDesktopPointer()) return;
 
-     if (!isDesktopPointer()) {
-    e.preventDefault();
+      if (Date.now() - lastNoTouchTime < 500) {
+        e.preventDefault();
+        return;
+      }
 
-    mobileNoClickAnimation(e.target);
+      handleMobileNoButton(e);
+    }, true);
 
-    openMobileNoModal();
+    document.addEventListener('click', (e) => {
+      if (!e.target) return;
 
-    return;
-}
+      if (e.target.id === "mobileModalBtn") {
+        closeMobileNoModal();
+        return;
+      }
+
+      if (e.target.id === "mobileNoModal") {
+        const okBtn = document.getElementById("mobileModalBtn");
+        if (okBtn && !okBtn.disabled) closeMobileNoModal();
+        return;
+      }
+
+      if (e.target.id !== 'noBtn') return;
+
+      if (!isDesktopPointer()) {
+        if (Date.now() - lastNoTouchTime < 500) {
+          e.preventDefault();
+          return;
+        }
+
+        handleMobileNoButton(e);
+        return;
+      }
 
       if (Math.random() < 0.75) {
         e.preventDefault();
@@ -665,18 +711,7 @@
 
       sayNo();
     }, true);
-   document.addEventListener("click", function(e) {
 
-    if (e.target.id === "mobileModalBtn") {
-
-        document.getElementById("mobileNoModal")
-            .classList.remove("show");
-
-        clearInterval(mobileTimer);
-        mobileTimer = null;
-    }
-
-});
     window.addEventListener('resize', () => {
       const btn = document.getElementById('noBtn');
       const buttons = document.querySelector('.buttons');
@@ -711,7 +746,7 @@
         </p>
 
         <div class="mobile-countdown" id="mobileCountdown">
-            15
+            154
         </div>
 
         <button
