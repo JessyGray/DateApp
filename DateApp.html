@@ -643,103 +643,53 @@
       }, 130);
     }
 
-    let lastMobileNoOpen = 0;
+    document.addEventListener('click', function(e) {
+    if (!e.target) return;
 
-    function handleMobileNoTap(e) {
-      if (!e.target || e.target.id !== 'noBtn') return;
-      if (isDesktopPointer()) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      const now = Date.now();
-      if (now - lastMobileNoOpen < 400) return;
-      lastMobileNoOpen = now;
-
-      mobileNoClickAnimation(e.target);
-      openMobileNoModal();
-    }
-
-    document.addEventListener('touchend', handleMobileNoTap, { capture: true, passive: false });
-    document.addEventListener('pointerup', handleMobileNoTap, true);
-
-    document.addEventListener('click', (e) => {
-      if (!e.target || e.target.id !== 'noBtn') return;
-
-      if (!isDesktopPointer()) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (Date.now() - lastMobileNoOpen > 400) {
-          mobileNoClickAnimation(e.target);
-          openMobileNoModal();
+    if (e.target.id === "noBtn") {
+        if (!isDesktopPointer()) {
+            e.preventDefault();
+            mobileNoClickAnimation(e.target);
+            openMobileNoModal();
+            return;
         }
 
-        return;
-      }
+        if (Math.random() < 0.75) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            moveNoButton();
+            return;
+        }
 
-      if (Math.random() < 0.75) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        moveNoButton();
-        return;
-      }
+        sayNo();
+    }
 
-      sayNo();
-    }, true);
+    if (e.target.id === "mobileModalBtn") {
+        document.getElementById("mobileNoModal")
+            .classList.remove("show");
 
-   
-   document.addEventListener("click", function(e) {
+        clearInterval(mobileTimer);
+        mobileTimer = null;
 
-if (e.target.id === "mobileModalBtn") {
+        sendTelegramNotification('Она нажала НЕТ / Не сейчас');
 
-    document.getElementById("mobileNoModal")
-        .classList.remove("show");
-
-    clearInterval(mobileTimer);
-    mobileTimer = null;
-
-    sendTelegramNotification('Она нажала НЕТ / Не сейчас');
-
-    render(`
-    
-        <div class="emoji">🤝</div>
-
-        <h1>Окей, без неловкости</h1>
-
-        <p>
-            Спасибо за честный ответ.
-            Всё спокойно, дружески и без странных моментов.
-        </p>
-
-        <button class="btn soft"
-            onclick="location.reload()">
-            Вернуться назад
-        </button>
-
-        <div class="small">
-            P.S. лучше спросить нормально,
-            чем потом делать вид,
-            что я не хотел 😄
-        </div>
-    `);
-}
-
-
-});
-
-    document.addEventListener("click", function (e) {
+        render(`
+            <div class="emoji">🤝</div>
+            <h1>Окей, без неловкости</h1>
+            <p>Спасибо за честный ответ. Всё спокойно, дружески и без странных моментов.</p>
+            <button class="btn soft" onclick="location.reload()">Вернуться назад</button>
+            <div class="small">P.S. лучше спросить нормально, чем потом делать вид, что я не хотел 😄</div>
+        `);
+    }
 
     if (e.target.id === "mobileCloseBtn") {
-
         document.getElementById("mobileNoModal")
             .classList.remove("show");
 
         clearInterval(mobileTimer);
         mobileTimer = null;
     }
-
-});
+}, true);
     window.addEventListener('resize', () => {
       const btn = document.getElementById('noBtn');
       const buttons = document.querySelector('.buttons');
